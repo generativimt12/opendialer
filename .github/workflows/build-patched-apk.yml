@@ -3,10 +3,8 @@ name: Build patched APK
 on:
   push:
     branches:
-      - "fix/ringtone-answer-race"
-  pull_request:
-    branches:
       - "main"
+      - "fix/ringtone-answer-race"
   workflow_dispatch:
 
 permissions:
