@@ -313,7 +313,10 @@ class CallsHandler @Inject constructor(
     }
 
     private fun silenceRinger() {
-        context?.getSystemService(TelecomManager::class.java)?.silenceRinger()
+        // Silence through the active InCallService first. This closes the race
+        // where a delayed Telecom ringtone starts after the user answered.
+        callService?.silenceRinger()
+            ?: context?.getSystemService(TelecomManager::class.java)?.silenceRinger()
     }
 
     fun attemptStartActivity() {
