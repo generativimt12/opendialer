@@ -32,6 +32,7 @@ class OngoingCall(
     private val context: Context,
     val call: Call,
     private val onRemoved: (Call) -> Unit,
+    private val onCallBecameRinging: () -> Unit,
     private val onCallBecameActive: () -> Unit,
     val sequence: Long
 ) {
@@ -143,6 +144,9 @@ class OngoingCall(
                 onRemoved(call)
                 OngoingCallHelper.handleDisconnectCause(context, call)
                 return
+            }
+            Call.STATE_RINGING -> {
+                onCallBecameRinging()
             }
             Call.STATE_ACTIVE -> {
                 _state.update { it.copy(startTime = CommonUtils.getCurrentTime()) }
