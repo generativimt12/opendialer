@@ -144,6 +144,7 @@ class CallsHandler @Inject constructor(
                     context,
                     call,
                     onRemoved = { removeCall(it) },
+                    onCallBecameActive = { callService?.silenceRinger() },
                     sequence = nextCallSequence++
                 )
                 newOngoingCall = ongoingCall
@@ -194,6 +195,7 @@ class CallsHandler @Inject constructor(
                         context!!,
                         call,
                         onRemoved = { removeCall(it) },
+                        onCallBecameActive = { callService?.silenceRinger() },
                         sequence = nextCallSequence++
                     )
                     reconciledMap[call] = ongoingCall
