@@ -196,7 +196,7 @@ class CallsHandler @Inject constructor(
                         context!!,
                         call,
                         onRemoved = { removeCall(it) },
-                        onCallBecameActive = { callService?.silenceRinger() },
+                        onCallBecameActive = { silenceRinger() },
                         sequence = nextCallSequence++
                     )
                     reconciledMap[call] = ongoingCall
