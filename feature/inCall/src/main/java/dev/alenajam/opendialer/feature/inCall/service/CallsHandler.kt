@@ -3,6 +3,7 @@ package dev.alenajam.opendialer.feature.inCall.service
 import android.content.Context
 import android.telecom.Call
 import android.telecom.CallAudioState
+import android.telecom.TelecomManager
 import android.telecom.VideoProfile
 import androidx.annotation.MainThread
 import dev.alenajam.opendialer.feature.inCall.ui.InCallActivity
@@ -144,7 +145,7 @@ class CallsHandler @Inject constructor(
                     context,
                     call,
                     onRemoved = { removeCall(it) },
-                    onCallBecameActive = { callService?.silenceRinger() },
+                    onCallBecameActive = { silenceRinger() },
                     sequence = nextCallSequence++
                 )
                 newOngoingCall = ongoingCall
@@ -309,6 +310,10 @@ class CallsHandler @Inject constructor(
     @MainThread
     fun updateCanAddCall(newCanAddCall: Boolean) {
         _canAddCall.value = newCanAddCall
+    }
+
+    private fun silenceRinger() {
+        context?.getSystemService(TelecomManager::class.java)?.silenceRinger()
     }
 
     fun attemptStartActivity() {
