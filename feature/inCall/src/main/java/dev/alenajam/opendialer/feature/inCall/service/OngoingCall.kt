@@ -32,6 +32,7 @@ class OngoingCall(
     private val context: Context,
     val call: Call,
     private val onRemoved: (Call) -> Unit,
+    private val onCallBecameActive: () -> Unit,
     val sequence: Long
 ) {
     private val _state = MutableStateFlow(OngoingCallState())
@@ -145,6 +146,10 @@ class OngoingCall(
             }
             Call.STATE_ACTIVE -> {
                 _state.update { it.copy(startTime = CommonUtils.getCurrentTime()) }
+                // Android/Telecom owns the normal incoming-call ringtone. Explicitly
+                // silence it when the call becomes active so a delayed ringtone
+                // callback cannot start playing after the user has answered.
+                onCallBecameActive()
             }
         }
         lastState = state
@@ -158,7 +163,6 @@ class OngoingCall(
         _state.update { it.copy(totalTime = newTotal, startTime = -1) }
     }
 
-    // Direct access to state for legacy/convenience
     val state: Int get() = _state.value.state
     val callerNumber: String get() = _state.value.callerNumber
     val callerName: String? get() = _state.value.callerName
@@ -172,6 +176,7 @@ class OngoingCall(
 
     fun answer() {
         if (!CallActionPolicy.shouldAnswer(state)) return
+        onCallBecameActive()
         call.answer(VideoProfile.STATE_AUDIO_ONLY)
     }
 
